@@ -1,7 +1,7 @@
 {
   "name": "better-xml-schema",
   "version": "1.0.0",
-  "description": "XML to JS object parser and validator",
+  "description": "XML to TS object parser and validator",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
