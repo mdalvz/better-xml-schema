@@ -12,4 +12,5 @@ export declare function boolean(): BooleanAttribute;
 export declare function number(): NumberAttribute;
 export declare function string(): StringAttribute;
 export declare function parse<T>(root: AbstractElement<T>, data: string): T;
+export declare function parseFile<T>(root: AbstractElement<T>, path: string): Promise<T>;
 export type infer<T extends AbstractElement<any>> = T['_output'];
