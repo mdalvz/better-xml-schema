@@ -36,4 +36,9 @@ export function parse<T>(root: AbstractElement<T>, data: string): T {
   return parser.parse(data);
 }
 
+export async function parseFile<T>(root: AbstractElement<T>, path: string): Promise<T> {
+  const parser = new Parser(root);
+  return parser.parseFile(path);
+}
+
 export type infer<T extends AbstractElement<any>> = T['_output'];

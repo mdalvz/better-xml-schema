@@ -1,3 +1,4 @@
+import { readFile } from 'fs/promises';
 import { XMLParser } from 'fast-xml-parser';
 import { AbstractElement } from '../element/AbstractElement';
 
@@ -20,6 +21,13 @@ export class Parser<T> {
   public parse(data: string): T {
     const value = this._parser.parse(data);
     return this._root.parse([value]);
+  }
+
+  public async parseFile(path: string): Promise<T> {
+    const data = await readFile(path, {
+      encoding: 'utf8',
+    });
+    return this.parse(data);
   }
 
 }
