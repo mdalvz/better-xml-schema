@@ -1,6 +1,7 @@
 import { AbstractConverter } from '../converter/AbstractConverter';
 import { AbstractElement } from './AbstractElement';
 import { XmlElement } from '../xml/XmlElement';
+export declare function wrapper(prepend: string, fn: () => void): void;
 export type ElementAttributes = {
     [k: string]: AbstractConverter<string | undefined, any>;
 };
