@@ -1,4 +1,3 @@
-export declare abstract class AbstractAttribute<TOutput> {
-    readonly _output: TOutput;
-    abstract parse(input?: string): TOutput;
+import { AbstractConverter } from '../converter/AbstractConverter';
+export declare abstract class AbstractAttribute<TOutput> extends AbstractConverter<string | undefined, TOutput> {
 }

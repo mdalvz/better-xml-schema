@@ -1,79 +1,59 @@
 import { AbstractAttribute } from './AbstractAttribute';
-import { OptionalAttribute } from './OptionalAttribute';
+
+export interface NumberAttributeDef {
+  min?: number;
+  max?: number;
+  positive?: boolean;
+  negative?: boolean;
+  integer?: boolean;
+}
 
 export class NumberAttribute extends AbstractAttribute<number> {
 
-  private _min?: number;
-
-  private _max?: number;
-
-  private _positive?: boolean;
-
-  private _negative?: boolean;
-
-  private _integer?: boolean;
-
-  public constructor(
-    min?: number,
-    max?: number,
-    positive?: boolean,
-    negative?: boolean,
-    integer?: boolean
-  ) {
+  private readonly def: NumberAttributeDef;
+  
+  public constructor(def: NumberAttributeDef) {
     super();
-    this._min = min;
-    this._max = max;
-    this._positive = positive;
-    this._negative = negative;
-    this._integer = integer;
+    this.def = def;
   }
 
   public min(min: number): NumberAttribute {
-    this._min = min;
-    return this;
+    return new NumberAttribute({ ...this.def, min });
   }
 
   public max(max: number): NumberAttribute {
-    this._max = max;
-    return this;
+    return new NumberAttribute({ ...this.def, max });
   }
 
   public positive(): NumberAttribute {
-    this._positive = true;
-    return this;
+    return new NumberAttribute({ ...this.def, positive: true });
   }
 
   public negative(): NumberAttribute {
-    this._negative = true;
-    return this;
+    return new NumberAttribute({ ...this.def, negative: true });
   }
 
   public integer(): NumberAttribute {
-    this._integer = true;
-    return this;
+    return new NumberAttribute({ ...this.def, integer: true });
   }
 
-  public optional(): OptionalAttribute<number> {
-    return new OptionalAttribute(this);
-  }
-
-  public parse(input?: string): number {
+  public convert(input: string | undefined): number {
     if (input === undefined) {
       throw new Error(`Attribute is required`);
     }
     const result = parseFloat(input);
     if (isNaN(result)) {
       throw new Error(`Attribute must be a number, got "${input}"`);
-    } else if (this._integer && !Number.isInteger(result)) {
+    } else if (this.def.integer && !Number.isInteger(result)) {
       throw new Error(`Attribute must be an integer, got "${input}"`);
-    } else if (this._positive && !(result > 0)) {
+    } else if (this.def.positive && !(result > 0)) {
       throw new Error(`Attribute must be positive, got "${input}"`);
-    } else if (this._negative && !(result < 0)) {
+    } else if (this.def.negative && !(result < 0)) {
       throw new Error(`Attribute must be negative, got "${input}"`);
-    } else if (this._min !== undefined && result < this._min) {
-      throw new Error(`Attribute must have min value ${this._min}, got "${input}"`);
-    } else if (this._max !== undefined && result > this._max) {
-      throw new Error(`Attribute must have max value ${this._max}, got "${input}"`);
+    } else if (this.def.min !== undefined && result < this.def.min) {
+      throw new Error(`Attribute must have min value ${this.def.min}, got "${input}"`);
+    } else if (this.def.max !== undefined && result > this.def.max) {
+      throw new Error(`Attribute must have max value ${this.def.max}, got "${input}"`);
     } else {
       return result;
     }

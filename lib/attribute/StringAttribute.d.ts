@@ -1,13 +1,14 @@
 import { AbstractAttribute } from './AbstractAttribute';
-import { OptionalAttribute } from './OptionalAttribute';
+export interface StringAttributeDef {
+    min?: number;
+    max?: number;
+    regex?: RegExp;
+}
 export declare class StringAttribute extends AbstractAttribute<string> {
-    private _min?;
-    private _max?;
-    private _regex?;
-    constructor(min?: number, max?: number, regex?: RegExp);
+    private readonly def;
+    constructor(def: StringAttributeDef);
     min(min: number): StringAttribute;
     max(max: number): StringAttribute;
     regex(regex: RegExp): StringAttribute;
-    optional(): OptionalAttribute<string>;
-    parse(input?: string): string;
+    convert(input: string | undefined): string;
 }

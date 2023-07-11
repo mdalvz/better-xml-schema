@@ -1,25 +1,20 @@
+import { AbstractConverter } from '../converter/AbstractConverter';
 import { AbstractElement } from './AbstractElement';
-import { AbstractAttribute } from '../attribute/AbstractAttribute';
-import { ElementArray } from './ElementArray';
-export type ElementAttributesShape = {
-    [k: string]: AbstractAttribute<any>;
+import { XmlElement } from '../xml/XmlElement';
+export type ElementAttributes = {
+    [k: string]: AbstractConverter<string | undefined, any>;
 };
-export type ElementChildrenShape = {
-    [k: string]: AbstractElement<any>;
+export type ElementChildren = {
+    [k: string]: AbstractConverter<XmlElement[] | undefined, any>;
 };
-type ElementOutput<TAttributesShape extends ElementAttributesShape, TChildrenShape extends ElementChildrenShape> = {
-    a: {
-        [P in keyof TAttributesShape]: TAttributesShape[P]['_output'];
-    };
-    c: {
-        [P in keyof TChildrenShape]: TChildrenShape[P]['_output'];
-    };
+export type ElementOutput<TAttributes extends ElementAttributes, TChildren extends ElementChildren> = {
+    [P in keyof TAttributes as P extends string ? `\$${P}` : never]: TAttributes[P]['output'];
+} & {
+    [P in keyof TChildren]: TChildren[P]['output'];
 };
-export declare class Element<TAttributesShape extends ElementAttributesShape, TChildrenShape extends ElementChildrenShape> extends AbstractElement<ElementOutput<TAttributesShape, TChildrenShape>> {
-    private readonly _attributesShape;
-    private readonly _childrenShape;
-    constructor(attributesShape: TAttributesShape, childrenShape: TChildrenShape);
-    array(): ElementArray<ElementOutput<TAttributesShape, TChildrenShape>>;
-    parse(input: any[]): ElementOutput<TAttributesShape, TChildrenShape>;
+export declare class Element<TAttributes extends ElementAttributes, TChildren extends ElementChildren> extends AbstractElement<ElementOutput<TAttributes, TChildren>> {
+    private readonly attributes;
+    private readonly children;
+    constructor(attributes: TAttributes, children: TChildren);
+    convert(input: XmlElement): ElementOutput<TAttributes, TChildren>;
 }
-export {};

@@ -1,7 +1,6 @@
-export abstract class AbstractElement<TOutput> {
+import { AbstractConverter } from '../converter/AbstractConverter';
+import { ArrayConverter } from '../converter/ArrayConverter';
+import { SingletonArrayConverter } from '../converter/SingletonArrayConverter';
+import { XmlElement } from '../xml/XmlElement';
 
-  public readonly _output!: TOutput;
-
-  public abstract parse(input: any[]): TOutput;
-
-}
+export abstract class AbstractElement<TOutput> extends AbstractConverter<XmlElement, TOutput> {}

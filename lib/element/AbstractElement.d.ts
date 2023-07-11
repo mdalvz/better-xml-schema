@@ -1,4 +1,4 @@
-export declare abstract class AbstractElement<TOutput> {
-    readonly _output: TOutput;
-    abstract parse(input: any[]): TOutput;
+import { AbstractConverter } from '../converter/AbstractConverter';
+import { XmlElement } from '../xml/XmlElement';
+export declare abstract class AbstractElement<TOutput> extends AbstractConverter<XmlElement, TOutput> {
 }

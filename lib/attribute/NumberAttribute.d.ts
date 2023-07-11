@@ -1,17 +1,18 @@
 import { AbstractAttribute } from './AbstractAttribute';
-import { OptionalAttribute } from './OptionalAttribute';
+export interface NumberAttributeDef {
+    min?: number;
+    max?: number;
+    positive?: boolean;
+    negative?: boolean;
+    integer?: boolean;
+}
 export declare class NumberAttribute extends AbstractAttribute<number> {
-    private _min?;
-    private _max?;
-    private _positive?;
-    private _negative?;
-    private _integer?;
-    constructor(min?: number, max?: number, positive?: boolean, negative?: boolean, integer?: boolean);
+    private readonly def;
+    constructor(def: NumberAttributeDef);
     min(min: number): NumberAttribute;
     max(max: number): NumberAttribute;
     positive(): NumberAttribute;
     negative(): NumberAttribute;
     integer(): NumberAttribute;
-    optional(): OptionalAttribute<number>;
-    parse(input?: string): number;
+    convert(input: string | undefined): number;
 }

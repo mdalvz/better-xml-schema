@@ -1,29 +1,24 @@
 import { readFile } from 'fs/promises';
-import { XMLParser } from 'fast-xml-parser';
+import { XmlParser } from '../xml/XmlParser';
 import { AbstractElement } from '../element/AbstractElement';
 
-export class Parser<T> {
+export class Parser<TOutput> {
 
-  private readonly _parser: XMLParser;
+  private readonly parser: XmlParser;
 
-  private readonly _root: AbstractElement<T>;
+  private readonly root: AbstractElement<TOutput>;
 
-  public constructor(root: AbstractElement<T>) {
-    this._parser = new XMLParser({
-      ignoreAttributes: false,
-      isArray: (tagName, jPath, isLeafNode, isAttribute) => {
-        return !isAttribute;
-      },
-    });
-    this._root = root;
+  public constructor(root: AbstractElement<TOutput>) {
+    this.parser = new XmlParser();
+    this.root = root;
   }
 
-  public parse(data: string): T {
-    const value = this._parser.parse(data);
-    return this._root.parse([value]);
+  public parse(data: string): TOutput {
+    const value = this.parser.parse(data);
+    return this.root.convert(value);
   }
 
-  public async parseFile(path: string): Promise<T> {
+  public async parseFile(path: string): Promise<TOutput> {
     const data = await readFile(path, {
       encoding: 'utf8',
     });

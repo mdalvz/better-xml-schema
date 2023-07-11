@@ -1,5 +1,4 @@
 import { AbstractAttribute } from './AbstractAttribute';
-import { OptionalAttribute } from './OptionalAttribute';
 
 export class BooleanAttribute extends AbstractAttribute<boolean> {
 
@@ -7,11 +6,7 @@ export class BooleanAttribute extends AbstractAttribute<boolean> {
     super();
   }
 
-  public optional(): OptionalAttribute<boolean> {
-    return new OptionalAttribute(this);
-  }
-
-  public parse(input?: string): boolean {
+  public convert(input: string | undefined): boolean {
     if (input === undefined) {
       throw new Error(`Attribute is required`);
     } else if (['1', 'true', 't'].includes(input.toLowerCase())) {

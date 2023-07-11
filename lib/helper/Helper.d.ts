@@ -1,16 +1,19 @@
-import { Element, ElementAttributesShape, ElementChildrenShape } from '../element/Element';
+import { Element, ElementAttributes, ElementChildren } from '../element/Element';
 import { BooleanAttribute } from '../attribute/BooleanAttribute';
 import { NumberAttribute } from '../attribute/NumberAttribute';
 import { StringAttribute } from '../attribute/StringAttribute';
 import { AbstractElement } from '../element/AbstractElement';
-export declare function one<TAttributesShape extends ElementAttributesShape, TChildrenShape extends ElementChildrenShape>(attributesShape: TAttributesShape, childrenShape: TChildrenShape): Element<TAttributesShape, TChildrenShape>;
-export declare function many<TAttributesShape extends ElementAttributesShape, TChildrenShape extends ElementChildrenShape>(attributesShape: TAttributesShape, childrenShape: TChildrenShape): import("../element/ElementArray").ElementArray<{
-    a: { [P in keyof TAttributesShape]: TAttributesShape[P]["_output"]; };
-    c: { [P_1 in keyof TChildrenShape]: TChildrenShape[P_1]["_output"]; };
-}>;
+import { SingletonArrayConverter } from '../converter/SingletonArrayConverter';
+import { ArrayConverter } from '../converter/ArrayConverter';
+import { AbstractConverter } from '../converter/AbstractConverter';
+import { OptionalConverter } from '../converter/OptionalConverter';
+export declare function element<TAttributes extends ElementAttributes, TChildren extends ElementChildren>(attributes: TAttributes, children: TChildren): Element<TAttributes, TChildren>;
+export declare function one<TOutput>(target: AbstractElement<TOutput>): SingletonArrayConverter<import("../xml/XmlElement").XmlElement, TOutput>;
+export declare function many<TOutput>(target: AbstractElement<TOutput>): ArrayConverter<import("../xml/XmlElement").XmlElement, TOutput>;
+export declare function optional<TInput, TOutput>(target: AbstractConverter<TInput, TOutput>): OptionalConverter<TInput, TOutput>;
 export declare function boolean(): BooleanAttribute;
 export declare function number(): NumberAttribute;
 export declare function string(): StringAttribute;
-export declare function parse<T>(root: AbstractElement<T>, data: string): T;
+export declare function parse<TOutput>(root: AbstractElement<TOutput>, data: string): TOutput;
 export declare function parseFile<T>(root: AbstractElement<T>, path: string): Promise<T>;
-export type infer<T extends AbstractElement<any>> = T['_output'];
+export type infer<T extends AbstractElement<any>> = T['output'];

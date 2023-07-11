@@ -1,62 +1,47 @@
+import { AbstractConverter } from '../converter/AbstractConverter';
 import { AbstractElement } from './AbstractElement';
-import { AbstractAttribute } from '../attribute/AbstractAttribute';
-import { ElementArray } from './ElementArray';
+import { XmlElement } from '../xml/XmlElement';
 import { wrapper } from './Wrapper';
 
-export type ElementAttributesShape = {
-  [k: string]: AbstractAttribute<any>;
+export type ElementAttributes = {
+  [k: string]: AbstractConverter<string | undefined, any>;
 };
 
-export type ElementChildrenShape = {
-  [k: string]: AbstractElement<any>;
+export type ElementChildren = {
+  [k: string]: AbstractConverter<XmlElement[] | undefined, any>;
 };
 
-type ElementOutput<TAttributesShape extends ElementAttributesShape, TChildrenShape extends ElementChildrenShape> = {
-  a: {
-    [P in keyof TAttributesShape]: TAttributesShape[P]['_output'];
-  };
-  c: {
-    [P in keyof TChildrenShape]: TChildrenShape[P]['_output'];
-  };
+export type ElementOutput<TAttributes extends ElementAttributes, TChildren extends ElementChildren> = {
+  [P in keyof TAttributes as P extends string ? `\$${P}` : never]: TAttributes[P]['output'];
+} & {
+  [P in keyof TChildren]: TChildren[P]['output'];
 };
 
-export class Element<TAttributesShape extends ElementAttributesShape, TChildrenShape extends ElementChildrenShape> extends AbstractElement<ElementOutput<TAttributesShape, TChildrenShape>> {
+export class Element<TAttributes extends ElementAttributes, TChildren extends ElementChildren> extends AbstractElement<ElementOutput<TAttributes, TChildren>> {
 
-  private readonly _attributesShape: TAttributesShape;
+  private readonly attributes: TAttributes;
 
-  private readonly _childrenShape: TChildrenShape;
+  private readonly children: TChildren;
 
-  public constructor(attributesShape: TAttributesShape, childrenShape: TChildrenShape) {
+  public constructor(attributes: TAttributes, children: TChildren) {
     super();
-    this._attributesShape = attributesShape;
-    this._childrenShape = childrenShape;
+    this.attributes = attributes;
+    this.children = children;
   }
 
-  public array(): ElementArray<ElementOutput<TAttributesShape, TChildrenShape>> {
-    return new ElementArray(this);
-  }
-
-  public parse(input: any[]): ElementOutput<TAttributesShape, TChildrenShape> {
-    if (input.length !== 1) {
-      throw new Error(`Expected one element, got ${input.length}`);
-    }
-    let result = {
-      a: {} as any,
-      c: {} as any,
-    };
-    for (const key in this._attributesShape) {
+  public convert(input: XmlElement): ElementOutput<TAttributes, TChildren> {
+    const result: any = {};
+    for (const key in this.attributes) {
       wrapper(`At attribute "${key}":`, () => {
-        const value = input[0][`@_${key}`] as string | undefined;
-        result.a[key] = this._attributesShape[key].parse(value);
+        result[`\$${key}`] = this.attributes[key].convert(input.getAttribute(key));
       });
     }
-    for (const key in this._childrenShape) {
+    for (const key in this.children) {
       wrapper(`At element <${key}>:`, () => {
-        const value = input[0][key] as any[] | undefined || [];
-        result.c[key] = this._childrenShape[key].parse(value);
+        result[key] = this.children[key].convert(input.getChildren(key));
       });
     }
-    return result as ElementOutput<TAttributesShape, TChildrenShape>;
+    return result as ElementOutput<TAttributes, TChildren>;
   }
   
 }
